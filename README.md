@@ -77,9 +77,9 @@ python pix2pix.py --dataroot ./datasets/cityscapes --which_direction BtoA --num_
 
 After finish training, saved models are in the `./models` directory.
 
-- `which_direction` , `no_resize_or_crop` and `no_flip` options must be same with Training.
-- `batchSize` means test sample size.
-- `num_epochs` is the parameter which model will be used for test.
+- `which_direction` , `no_resize_or_crop` and `no_flip` options must be same with Training
+- `batchSize` means test sample size
+- `num_epochs` is the parameter which model will be used for test
 
 ### 6.1 edges2handbags
 
