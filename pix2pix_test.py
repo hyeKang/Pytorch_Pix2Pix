@@ -39,42 +39,28 @@ IMG_EXTENSIONS = [
     '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP',
 ]
 
-def is_image_file(filename):
-    return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
-
-def make_dataset(dir):
-    images = []
-    assert os.path.isdir(dir), '%s is not a valid directory' % dir
-
-    for root, _, fnames in sorted(os.walk(dir)):
-        for fname in fnames:
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                images.append(path)
-
-    return images
-
-class LoadDataset(data.Dataset):
+##### Helper Functions for Data Loading & Pre-processing
+class ImageFolder(data.Dataset):
     def __init__(self, opt):
-        super(LoadDataset, self).__init__()
-        self.opt = opt
-        self.root = opt.dataroot  # ./maps
-        self.dir_AB = os.path.join(opt.dataroot, 'val')  # ./maps/val
-        self.AB_paths = sorted(make_dataset(self.dir_AB))
+        # os.listdir Function gives all lists of directory
+        self.root = opt.dataroot
+        self.no_resize_or_crop = opt.no_resize_or_crop
+        self.no_flip = opt.no_flip
         self.transform = transforms.Compose([transforms.ToTensor(),
                                              transforms.Normalize((0.5, 0.5, 0.5),
                                                                   (0.5, 0.5, 0.5))])
+        self.dir_AB = os.path.join(opt.dataroot, 'train')  # ./maps/train
+        self.image_paths = list(map(lambda x: os.path.join(self.dir_AB, x), os.listdir(self.dir_AB)))
 
     def __getitem__(self, index):
-        AB_path = self.AB_paths[index]
+        AB_path = self.image_paths[index]
         AB = Image.open(AB_path).convert('RGB')
 
-        if(not self.opt.no_resize_or_crop):
+        if(not self.no_resize_or_crop):
             AB = AB.resize((286 * 2, 286), Image.BICUBIC)
             AB = self.transform(AB)
 
-            w_total = AB.size(2)
-            w = int(w_total / 2)
+            w = int(AB.size(2) / 2)
             h = AB.size(1)
             w_offset = random.randint(0, max(0, w - 256 - 1))
             h_offset = random.randint(0, max(0, h - 256 - 1))
@@ -89,7 +75,7 @@ class LoadDataset(data.Dataset):
             A = AB[:, :256, :256]
             B = AB[:, :256, w:w + 256]
 
-        if (not self.opt.no_flip) and random.random() < 0.5:
+        if (not self.no_flip) and random.random() < 0.5:
             idx = [i for i in range(A.size(2) - 1, -1, -1)]
             idx = torch.LongTensor(idx)
             A = A.index_select(2, idx)
@@ -98,7 +84,7 @@ class LoadDataset(data.Dataset):
         return {'A': A, 'B': B}
 
     def __len__(self):
-        return len(self.AB_paths)
+        return len(self.image_paths)
 
 ##### Helper Function for GPU Training
 def to_variable(x):
@@ -119,7 +105,7 @@ def main():
     args = parser.parse_args()
     print(args)
 
-    dataset = LoadDataset(args)
+    dataset = ImageFolder(args)
     data_loader = data.DataLoader(dataset=dataset,
                                   batch_size=args.batchSize,
                                   shuffle=True,
@@ -138,15 +124,13 @@ def main():
     generator.eval()
 
     if torch.cuda.is_available():
-        generator.cuda()
+        generator = generator.cuda()
 
     total_step = len(data_loader) # For Print Log
     for i, sample in enumerate(data_loader):
         AtoB = args.which_direction == 'AtoB'
         input_A = sample['A' if AtoB else 'B']
         input_B = sample['B' if AtoB else 'A']
-        input_A.resize_(input_A.size()).copy_(input_A)
-        input_B.resize_(input_B.size()).copy_(input_B)
 
         real_A = to_variable(input_A)
         fake_B = generator(real_A)
