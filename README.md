@@ -1,12 +1,16 @@
 # Pix2Pix in Pytorch
 
-[[GAN](https://github.com/taeoh-kim/GANin50lines)][[DCGAN](https://github.com/taeoh-kim/Pytorch_DCGAN)][[InfoGAN](https://github.com/taeoh-kim/Pytorch_InfoGAN)][[Pix2Pix](https://github.com/taeoh-kim/Pytorch_Pix2Pix)][[DiscoGAN](https://github.com/taeoh-kim/Pytorch_DiscoGAN)]
-
 Study Friendly Implementation of Pix2Pix in Pytorch
 
 More Information: [Original Paper](https://arxiv.org/pdf/1611.07004v1.pdf)
 
 Identical Tensorflow Implemenation will be uploaded on [HyeongminLEE's Github](https://github.com/HyeongminLEE)
+
+- GAN: [[Pytorch](https://github.com/taeoh-kim/GANin50lines)][[Tensorflow](https://github.com/HyeongminLEE/GANin50lines)]
+- DCGAN: [[Pytorch](https://github.com/taeoh-kim/Pytorch_DCGAN)][[Tensorflow](https://github.com/HyeongminLEE/Tensorflow_DCGAN)]
+- InfoGAN: [[Pytorch](https://github.com/taeoh-kim/Pytorch_InfoGAN)][Tensorflow]
+- Pix2Pix: [[Pytorch](https://github.com/taeoh-kim/Pytorch_Pix2Pix)][Tensorflow]
+- DiscoGAN: [[Pytorch](https://github.com/taeoh-kim/Pytorch_DiscoGAN)][Tensorflow]
 
 ## 1. Environments
 
