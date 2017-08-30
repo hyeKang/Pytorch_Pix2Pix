@@ -37,6 +37,10 @@ Identical Tensorflow Implemenation will be uploaded on [HyeongminLEE's Github](h
 - Adam_beta1 = 0.5
 - Lambda_A = 100 (Weight of L1-Loss)
 
+Use Batch Normalization when Batch Size = 4
+
+Use Instance Normalization when Batch Size = 1
+
 ### 3.2 Generator Networks (network.py)
 
 <p align="center"><img width="100%" src="images/generator.PNG" /></p>
